@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Care Cost Comparison Tool - Dementia Care Planning</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f8f9fa;
+        }
+        .header {
+            background: linear-gradient(135deg, #2c3e50, #3498db);
+            color: white;
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        .header h1 {
+            margin: 0 0 10px 0;
+            font-size: 2.2em;
+        }
+        .header p {
+            margin: 0;
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+        .disclaimer {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 30px;
+            color: #856404;
+        }
+        .disclaimer h3 {
+            margin-top: 0;
+            color: #856404;
+        }
+        .tool-section {
+            background: white;
+            margin: 25px 0;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .tool-section h3 {
+            color: #2c3e50;
+            margin-top: 0;
+            font-size: 1.4em;
+            border-left: 4px solid #3498db;
+            padding-left: 15px;
+        }
+        .form-group {
+            margin: 20px 0;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #dee2e6;
+            border-radius: 5px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        .form-group input:focus, .form-group select:focus {
+            border-color: #3498db;
+            outline: none;
+        }
+        .form-row {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        .form-row .form-group {
+            flex: 1;
+            min-width: 200px;
+        }
+        .btn {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            margin: 5px;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
+        }
+        .btn-secondary {
+            background: linear-gradient(135deg, #27ae60, #229954);
+        }
+        .btn-warning {
+            background: linear-gradient(135deg, #f39c12, #e67e22);
+        }
+        .btn-danger {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+        }
+        .care-option-card {
+            background: #f8f9fa;
+            border: 2px solid #dee2e6;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 15px 0;
+            transition: all 0.3s ease;
+        }
+        .care-option-card:hover {
+            border-color: #3498db;
+            box-shadow: 0 2px 10px rgba(52, 152, 219, 0.1);
+        }
+        .care-option-card h4 {
+            color: #2c3e50;
+            margin-top: 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .cost-display {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: #27ae60;
+            text-align: center;
+            margin: 10px 0;
+        }
+        .cost-breakdown {
+            background: white;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 10px 0;
+        }
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        .savings-highlight {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 15px 0;
+            color: #155724;
+            text-align: center;
+        }
+        .warning {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+            color: #856404;
+        }
+        .info-box {
+            background: #e8f4fd;
+            border: 1px solid #3498db;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+        }
+        .cost-factor {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+        }
+        .cost-factor:last-child {
+            border-bottom: none;
+            font-weight: bold;
+            font-size: 1.1em;
+            color: #2c3e50;
+        }
+        .chart-container {
+            background: white;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+        }
+        .bar-chart {
+            display: flex;
+            align-items: end;
+            justify-content: space-around;
+            height: 300px;
+            margin: 20px 0;
+            background: #f8f9fa;
+            border-radius: 5px;
+            padding: 20px;
+        }
+        .bar {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            border-radius: 5px 5px 0 0;
+            min-width: 60px;
+            display: flex;
+            flex-direction: column;
+            justify-content: end;
+            align-items: center;
+            color: white;
+            font-weight: bold;
+            position: relative;
+            margin: 0 5px;
+        }
+        .bar-label {
+            position: absolute;
+            bottom: -30px;
+            font-size: 12px;
+            color: #2c3e50;
+            text-align: center;
+            width: 100%;
+        }
+        .bar-value {
+            padding: 5px;
+            font-size: 11px;
+        }
+        @media (max-width: 768px) {
+            .form-row {
+                flex-direction: column;
+            }
+            .header h1 {
+                font-size: 1.8em;
+            }
+            .btn {
+                width: 100%;
+                margin: 10px 0;
+            }
+            .comparison-grid {
+                grid-template-columns: 1fr;
+            }
+            .bar-chart {
+                height: 250px;
+                flex-direction: column;
+                align-items: center;
+            }
+            .bar {
+                width: 80%;
+                height: 40px;
+                margin: 5px 0;
+                flex-direction: row;
+                justify-content: space-between;
+            }
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Care Cost Comparison Tool</h1>
+        <p>Compare Dementia Care Options and Costs Across Different Settings</p>
+    </div>
+
+    <div class="disclaimer">
+        <h3>⚠️ Important Educational Disclaimer</h3>
+        <p><strong>This tool is for educational and planning purposes only.</strong> Cost estimates are based on national averages and your specific costs may vary significantly based on location, level of care needed, insurance coverage, and individual circumstances.</p>
+        <p><strong>For accurate pricing:</strong> Always contact providers directly for current rates in your area. Insurance coverage varies by plan and individual situation. This tool does not provide financial advice or guarantee coverage. Consult with healthcare professionals, insurance representatives, and financial advisors for personalized guidance.</p>
+        <p><strong>Privacy Note:</strong> All calculations are performed locally on your device. No personal information is transmitted or stored online.</p>
+    </div>
+
+    <div class="tool-section">
+        <h3>Your Care Planning Information</h3>
+        <div class="form-row">
+            <div class="form-group">
+                <label for="patientName">Patient Name (for your records):</label>
+                <input type="text" id="patientName" placeholder="Enter patient's name">
+            </div>
+            <div class="form-group">
+                <label for="location">Location (State):</label>
+                <select id="location" onchange="updateCostMultiplier()">
+                    <option value="1.0">National Average</option>
+                    <option value="1.4">California</option>
+                    <option value="1.3">New York</option>
+                    <option value="1.25">Massachusetts</option>
+                    <option value="1.2">Connecticut</option>
+                    <option value="1.15">New Jersey</option>
+                    <option value="1.1">Washington</option>
+                    <option value="1.05">Florida</option>
+                    <option value="0.95">Texas</option>
+                    <option value="0.9">North Carolina</option>
+                    <option value="0.85">Georgia</option>
+                    <option value="0.8">Tennessee</option>
+                    <option value="0.75">Ohio</option>
+                    <option value="0.7">Alabama</option>
+                    <option value="0.65">Mississippi</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label for="careLevel">Level of Care Needed:</label>
+                <select id="careLevel" onchange="updateCareLevel()">
+                    <option value="light">Light Support (4-8 hours/day)</option>
+                    <option value="moderate" selected>Moderate Care (8-16 hours/day)</option>
+                    <option value="intensive">Intensive Care (16-24 hours/day)</option>
+                    <option value="memory">Memory Care Specialized</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="timeframe">Cost Timeframe:</label>
+                <select id="timeframe" onchange="updateTimeframe()">
+                    <option value="monthly" selected>Monthly Costs</option>
+                    <option value="annual">Annual Costs</option>
+                    <option value="5year">5-Year Projection</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <div class="tool-section">
+        <h3>Insurance and Financial Information</h3>
+        <div class="form-row">
+            <div class="form-group">
+                <label for="medicare">Medicare Coverage:</label>
+                <select id="medicare" onchange="updateInsuranceCoverage()">
+                    <option value="none">No Medicare</option>
+                    <option value="original">Original Medicare (A & B)</option>
+                    <option value="advantage">Medicare Advantage</option>
+                    <option value="supplement">Medicare + Supplement</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="medicaid">Medicaid Status:</label>
+                <select id="medicaid" onchange="updateInsuranceCoverage()">
+                    <option value="none">No Medicaid</option>
+                    <option value="eligible">Medicaid Eligible</option>
+                    <option value="waiver">Home & Community Waiver</option>
+                    <option value="planning">Considering Medicaid Planning</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label for="ltcInsurance">Long-term Care Insurance:</label>
+                <select id="ltcInsurance" onchange="updateInsuranceCoverage()">
+                    <option value="none">No LTC Insurance</option>
+                    <option value="basic">Basic Policy ($100-150/day)</option>
+                    <option value="comprehensive">Comprehensive Policy ($200-300/day)</option>
+                    <option value="unlimited">Unlimited Benefit Policy</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="veterans">Veterans Benefits:</label>
+                <select id="veterans" onchange="updateInsuranceCoverage()">
+                    <option value="none">No Veterans Benefits</option>
+                    <option value="basic">Basic VA Benefits</option>
+                    <option value="aid">Aid & Attendance ($1,936/month)</option>
+                    <option value="housebound">Housebound Benefit ($1,431/month)</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <div class="tool-section">
+        <h3>Cost Comparison Results</h3>
+        <div id="costComparison" class="comparison-grid">
+            <!-- Cost comparison cards will be populated here -->
+        </div>
+        
+        <div class="chart-container">
+            <h4>Visual Cost Comparison</h4>
+            <div id="costChart" class="bar-chart">
+                <!-- Chart will be populated here -->
+            </div>
+        </div>
+    </div>
+
+    <div class="tool-section">
+        <h3>Detailed Cost Analysis</h3>
+        <div id="detailedAnalysis">
+            <!-- Detailed analysis will be populated here -->
+        </div>
+    </div>
+
+    <div class="tool-section">
+        <h3>Funding Strategy Recommendations</h3>
+        <div id="fundingStrategy">
+            <!-- Funding recommendations will be populated here -->
+        </div>
+    </div>
+
+    <div class="tool-section">
+        <h3>Action Items and Next Steps</h3>
+        <div id="actionItems">
+            <div class="form-group">
+                <label for="newAction">Add Custom Action Item:</label>
+                <input type="text" id="newAction" placeholder="Enter action item or task...">
+                <button type="button" class="btn btn-secondary" onclick="addActionItem()" style="margin-top: 10px;">Add Action Item</button>
+            </div>
+            <div id="actionsList" style="margin-top: 20px;">
+                <!-- Generated action items will appear here -->
+            </div>
+        </div>
+    </div>
+
+    <div class="tool-section" style="text-align: center;">
+        <h3>Save and Export Options</h3>
+        <button class="btn btn-secondary" onclick="saveComparison()">💾 Save Comparison to Device</button>
+        <button class="btn btn-warning" onclick="exportToPDF()">📄 Export Comparison Report</button>
+        <button class="btn" onclick="loadComparison()">📂 Load Saved Comparison</button>
+        <button class="btn btn-danger" onclick="resetComparison()">🔄 Reset All Data</button>
+        <input type="file" id="fileInput" accept=".json" style="display: none;" onchange="handleFileLoad(event)">
+        
+        <div class="warning" style="margin-top: 20px;">
+            <h4>Data Privacy Notice</h4>
+            <p><strong>Your privacy is protected:</strong> This tool performs all calculations locally on your device. No personal information is transmitted to external servers. When you save data, it downloads a file to your device that you control completely.</p>
+        </div>
+    </div>
+
+    <script>
+        // Global data storage
+        let comparisonData = {
+            patient: {
+                name: '',
+                location: '1.0',
+                careLevel: 'moderate',
+                timeframe: 'monthly'
+            },
+            insurance: {
+                medicare: 'none',
+                medicaid: 'none',
+                ltcInsurance: 'none',
+                veterans: 'none'
+            },
+            customActions: []
+        };
+
+        // Base cost data (national averages for 2024)
+        const baseCosts = {
+            nursingHome: {
+                monthly: 9034,
+                name: 'Nursing Home',
+                description: 'Full-time skilled nursing facility care'
+            },
+            assistedLiving: {
+                monthly: 5350,
+                name: 'Assisted Living',
+                description: 'Residential care with assistance'
+            },
+            homeCare: {
+                monthly: 5148,
+                name: 'Home Care (44hrs/week)',
+                description: 'Professional home care services'
+            },
+            homeHealth: {
+                monthly: 3500,
+                name: 'Home Health (Medicare)',
+                description: 'Medicare-covered home health services'
+            },
+            adultDay: {
+                monthly: 1820,
+                name: 'Adult Day Care',
+                description: 'Daytime care program (5 days/week)'
+            },
+            familyCare: {
+                monthly: 800,
+                name: 'Family Care + Support',
+                description: 'Family caregiving with support services'
+            }
+        };
+
+        // Care level multipliers
+        const careLevelMultipliers = {
+            light: 0.6,
+            moderate: 1.0,
+            intensive: 1.5,
+            memory: 1.8
+        };
+
+        // Initialize the tool
+        function initializeTool() {
+            updateCostComparison();
+            generateActionItems();
+        }
+
+        // Update cost multiplier based on location
+        function updateCostMultiplier() {
+            comparisonData.patient.location = document.getElementById('location').value;
+            updateCostComparison();
+        }
+
+        // Update care level
+        function updateCareLevel() {
+            comparisonData.patient.careLevel = document.getElementById('careLevel').value;
+            updateCostComparison();
+        }
+
+        // Update timeframe
+        function updateTimeframe() {
+            comparisonData.patient.timeframe = document.getElementById('timeframe').value;
+            updateCostComparison();
+        }
+
+        // Update insurance coverage
+        function updateInsuranceCoverage() {
+            comparisonData.insurance.medicare = document.getElementById('medicare').value;
+            comparisonData.insurance.medicaid = document.getElementById('medicaid').value;
+            comparisonData.insurance.ltcInsurance = document.getElementById('ltcInsurance').value;
+            comparisonData.insurance.veterans = document.getElementById('veterans').value;
+            updateCostComparison();
+        }
+
+        // Calculate adjusted costs
+        function calculateAdjustedCosts() {
+            const locationMultiplier = parseFloat(comparisonData.patient.location);
+            const careLevelMultiplier = careLevelMultipliers[comparisonData.patient.careLevel];
+            const timeframeMultiplier = comparisonData.patient.timeframe === 'annual' ? 12 : 
+                                       comparisonData.patient.timeframe === '5year' ? 60 : 1;
+
+            let adjustedCosts = {};
+            
+            Object.entries(baseCosts).forEach(([key, cost]) => {
+                let adjustedCost = cost.monthly * locationMultiplier * careLevelMultiplier * timeframeMultiplier;
+                
+                // Apply insurance adjustments
+                adjustedCost = applyInsuranceDiscounts(key, adjustedCost);
+                
+                adjustedCosts[key] = {
+                    ...cost,
+                    adjustedCost: Math.round(adjustedCost),
+                    savings: 0
+                };
+            });
+
+            return adjustedCosts;
+        }
+
+        // Apply insurance discounts
+        function applyInsuranceDiscounts(careType, baseCost) {
+            let adjustedCost = baseCost;
+            
+            // Medicare adjustments
+            if (comparisonData.insurance.medicare !== 'none' && careType === 'homeHealth') {
+                adjustedCost *= 0.2; // Medicare covers 80% after deductible
+            }
+            
+            // Medicaid adjustments
+            if (comparisonData.insurance.medicaid === 'waiver') {
+                if (careType === 'homeCare' || careType === 'homeHealth') {
+                    adjustedCost *= 0.1; // Minimal copay with waiver
+                }
+            }
+            
+            // Long-term care insurance
+            if (comparisonData.insurance.ltcInsurance !== 'none') {
+                const dailyBenefits = {
+                    basic: 125,
+                    comprehensive: 250,
+                    unlimited: 400
+                };
+                const monthlyBenefit = dailyBenefits[comparisonData.insurance.ltcInsurance] * 30;
+                adjustedCost = Math.max(0, adjustedCost - monthlyBenefit);
+            }
+            
+            // Veterans benefits
+            if (comparisonData.insurance.veterans === 'aid' && (careType === 'homeCare' || careType === 'homeHealth')) {
+                adjustedCost = Math.max(0, adjustedCost - 1936);
+            } else if (comparisonData.insurance.veterans === 'housebound' && (careType === 'homeCare' || careType === 'homeHealth')) {
+                adjustedCost = Math.max(0, adjustedCost - 1431);
+            }
+            
+            return adjustedCost;
+        }
+
+        // Update cost comparison display
+        function updateCostComparison() {
+            const costs = calculateAdjustedCosts();
+            const container = document.getElementById('costComparison');
+            const chartContainer = document.getElementById('costChart');
+            
+            // Find the lowest cost option for savings calculation
+            const lowestCost = Math.min(...Object.values(costs).map(c => c.adjustedCost));
+            
+            let html = '';
+            let chartHtml = '';
+            const maxCost = Math.max(...Object.values(costs).map(c => c.adjustedCost));
+            
+            Object.entries(costs).forEach(([key, cost]) => {
+                const savings = cost.adjustedCost > lowestCost ? cost.adjustedCost - lowestCost : 0;
+                const isLowest = cost.adjustedCost === lowestCost;
+                
+                html += `
+                    <div class="care-option-card" style="${isLowest ? 'border-color: #27ae60; box-shadow: 0 2px 10px rgba(39, 174, 96, 0.2);' : ''}">
+                        <h4>
+                            ${cost.name}
+                            ${isLowest ? '<span style="color: #27ae60; font-size: 0.8em;">(Most Affordable)</span>' : ''}
+                        </h4>
+                        <p style="color: #666; margin: 5px 0;">${cost.description}</p>
+                        <div class="cost-display">$${cost.adjustedCost.toLocaleString()}</div>
+                        <div class="cost-breakdown">
+                            <div class="cost-factor">
+                                <span>Base Cost:</span>
+                                <span>$${(baseCosts[key].monthly * parseFloat(comparisonData.patient.location)).toLocaleString()}</span>
+                            </div>
+                            <div class="cost-factor">
+                                <span>Care Level Adjustment:</span>
+                                <span>${Math.round((careLevelMultipliers[comparisonData.patient.careLevel] - 1) * 100)}%</span>
+                            </div>
+                            <div class="cost-factor">
+                                <span>Insurance Benefits:</span>
+                                <span>-$${(baseCosts[key].monthly * parseFloat(comparisonData.patient.location) * careLevelMultipliers[comparisonData.patient.careLevel] - cost.adjustedCost / (comparisonData.patient.timeframe === 'annual' ? 12 : comparisonData.patient.timeframe === '5year' ? 60 : 1)).toLocaleString()}</span>
+                            </div>
+                            <div class="cost-factor">
+                                <span>Final ${comparisonData.patient.timeframe === 'annual' ? 'Annual' : comparisonData.patient.timeframe === '5year' ? '5-Year' : 'Monthly'} Cost:</span>
+                                <span>$${cost.adjustedCost.toLocaleString()}</span>
+                            </div>
+                        </div>
+                        ${savings > 0 ? `<div class="warning">This option costs $${savings.toLocaleString()} more than the most affordable option.</div>` : ''}
+                        ${isLowest ? '<div class="savings-highlight">This is your most cost-effective option!</div>' : ''}
+                    </div>
+                `;
+                
+                // Add to chart
+                const barHeight = (cost.adjustedCost / maxCost) * 100;
+                chartHtml += `
+                    <div class="bar" style="height: ${barHeight}%">
+                        <div class="bar-value">$${(cost.adjustedCost / 1000).toFixed(0)}k</div>
+                        <div class="bar-label">${cost.name.split(' ')[0]}<br>${cost.name.split(' ')[1] || ''}</div>
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = html;
+            chartContainer.innerHTML = chartHtml;
+            
+            updateDetailedAnalysis(costs);
+            updateFundingStrategy(costs);
+        }
+
+        // Update detailed analysis
+        function updateDetailedAnalysis(costs) {
+            const container = document.getElementById('detailedAnalysis');
+            const lowestCost = Math.min(...Object.values(costs).map(c => c.adjustedCost));
+            const highestCost = Math.max(...Object.values(costs).map(c => c.adjustedCost));
+            
+            const html = `
+                <div class="info-box">
+                    <h4>Cost Analysis Summary</h4>
+                    <p><strong>Price Range:</strong> $${lowestCost.toLocaleString()} - $${highestCost.toLocaleString()} ${comparisonData.patient.timeframe === 'annual' ? 'annually' : comparisonData.patient.timeframe === '5year' ? 'over 5 years' : 'monthly'}</p>
+                    <p><strong>Potential Savings:</strong> Up to $${(highestCost - lowestCost).toLocaleString()} by choosing the most cost-effective option</p>
+                    <p><strong>Care Level:</strong> ${comparisonData.patient.careLevel} care needs</p>
+                    <p><strong>Location Factor:</strong> ${Math.round((parseFloat(comparisonData.patient.location) - 1) * 100)}% ${parseFloat(comparisonData.patient.location) > 1 ? 'above' : 'below'} national average</p>
+                </div>
+                
+                <div class="warning">
+                    <h4>Important Considerations</h4>
+                    <ul>
+                        <li>Costs vary significantly by geographic location and individual needs</li>
+                        <li>Insurance coverage can change based on medical necessity and eligibility</li>
+                        <li>Quality of care should be the primary consideration, not just cost</li>
+                        <li>Some options may have waiting lists or availability restrictions</li>
+                        <li>Family preferences and social factors are equally important</li>
+                    </ul>
+                </div>
+            `;
+            
+            container.innerHTML = html;
+        }
+
+        // Update funding strategy
+        function updateFundingStrategy(costs) {
+            const container = document.getElementById('fundingStrategy');
+            let recommendations = [];
+            
+            // Generate recommendations based on insurance status
+            if (comparisonData.insurance.medicare === 'none') {
+                recommendations.push("Consider Medicare enrollment if eligible - significant home health benefits available");
+            }
+            
+            if (comparisonData.insurance.medicaid === 'none' || comparisonData.insurance.medicaid === 'planning') {
+                recommendations.push("Explore Medicaid waiver programs for comprehensive home care coverage");
+            }
+            
+            if (comparisonData.insurance.ltcInsurance === 'none') {
+                recommendations.push("Long-term care insurance could provide significant cost protection");
+            }
+            
+            if (comparisonData.insurance.veterans === 'none') {
+                recommendations.push("If veteran status applies, Aid & Attendance benefits could provide substantial monthly support");
+            }
+            
+            // Add general recommendations
+            recommendations.push("Consider hybrid care models combining family care with professional services");
+            recommendations.push("Explore adult day programs to reduce full-time care costs");
+            recommendations.push("Investigate local Area Agency on Aging resources and programs");
+            
+            const html = `
+                <div class="info-box">
+                    <h4>Funding Strategy Recommendations</h4>
+                    <ul>
+                        ${recommendations.map(rec => `<li>${rec}</li>`).join('')}
+                    </ul>
+                </div>
+                
+                <div class="savings-highlight">
+                    <h4>Cost Optimization Tips</h4>
+                    <p>Mix and match care options to find the right balance of cost, quality, and family preferences. Many families use combination approaches to optimize both care and costs.</p>
+                </div>
+            `;
+            
+            container.innerHTML = html;
+        }
+
+        // Generate action items based on analysis
+        function generateActionItems() {
+            const actionsList = document.getElementById('actionsList');
+            const defaultActions = [
+                "Contact Area Agency on Aging for local resources and support",
+                "Schedule insurance benefits review with Medicare/Medicaid representatives",
+                "Research and interview at least 3 care providers in your area",
+                "Consult with elder law attorney about financial planning options",
+                "Create family meeting to discuss care preferences and budget",
+                "Get medical assessment for home health care eligibility",
